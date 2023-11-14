@@ -51,13 +51,13 @@ static int simplefs_file_get_block(struct inode *inode,
     if (index->extents[extent].ee_start == 0) {
         if (!create)
             return 0;
-        bno = get_free_blocks(sbi, 8);
+        bno = get_free_blocks(sbi, SIMPLEFS_MAX_BLOCKS_PER_EXTENT);
         if (!bno) {
             ret = -ENOSPC;
             goto brelse_index;
         }
         index->extents[extent].ee_start = bno;
-        index->extents[extent].ee_len = 8;
+        index->extents[extent].ee_len = SIMPLEFS_MAX_BLOCKS_PER_EXTENT;
         index->extents[extent].ee_block =
             extent ? index->extents[extent - 1].ee_block +
                          index->extents[extent - 1].ee_len
@@ -139,7 +139,7 @@ static int simplefs_write_begin(struct file *file,
     if (nr_allocs > sbi->nr_free_blocks)
         return -ENOSPC;
 
-    /* prepare the write */
+        /* prepare the write */
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 0)
     err = block_write_begin(mapping, pos, len, pagep, simplefs_file_get_block);
 #else

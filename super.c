@@ -277,7 +277,7 @@ int simplefs_fill_super(struct super_block *sb, void *data, int silent)
     }
 
     /* Create root inode */
-    root_inode = simplefs_iget(sb, 0);
+    root_inode = simplefs_iget(sb, 1);
     if (IS_ERR(root_inode)) {
         ret = PTR_ERR(root_inode);
         goto free_bfree;
@@ -287,7 +287,7 @@ int simplefs_fill_super(struct super_block *sb, void *data, int silent)
 #else
     inode_init_owner(root_inode, NULL, root_inode->i_mode);
 #endif
-    
+
     sb->s_root = d_make_root(root_inode);
     if (!sb->s_root) {
         ret = -ENOMEM;
